@@ -1,0 +1,49 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content %} {% if user.is_authenticated %} Hi {{ user.username }}!
+<p><a href="{% url 'logout' %}">Log Out</a></p>
+<h2>Habits</h2>
+<a href="{% url 'new_habit' %}">New Habit</a>
+<table>
+  <tr>
+    <th>Habit</th>
+    <th>Frequency</th>
+    <th>Streak</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+  {% for habit in user_habits %}
+  <tr>
+    <td>{{habit.habit_title}}</td>
+    <td>{{habit.frequency}}</td>
+    <td>{{habit.streak}}</td>
+    <td><a href="/habits/user_habits/{{ habit.id }}">Edit</a></td>
+    <td>
+      <form method="post" action="{% url 'delete_record' %}">
+        {% csrf_token %}
+        <button type="submit" name="delete_items" value="{{habit.pk}}">
+          Delete
+        </button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<h3>
+  Longest Streak:
+</h3>
+<ul>
+  <li>
+    {{habit_longest_streak}}
+  </li>
+</ul>
+<h3>Daily Habits</h3>
+<ul>
+  {% for i in daily_habits %}
+  <li>{{ i.habit_title }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>You are not logged in</p>
+<a href="{% url 'login' %}">Log In</a><br />
+<a href="{% url 'signup' %}">Sign Up</a>
+{% endif %} {% endblock %}
